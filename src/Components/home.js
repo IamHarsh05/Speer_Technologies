@@ -26,12 +26,29 @@ export default function Home() {
     getData();
   }, []);
 
+  
   const handleArchive = (index) => {
+    const elementToHide = document.getElementById(index);
     const updatedData = [...data];
     if (updatedData[index].is_archived === "false") {
       updatedData[index].is_archived = "true";
+      setTimeout(() => {
+          // Add the -translate-x-full class after the delay
+          elementToHide.classList.add('-translate-x-full');
+          
+          // Add another delay before adding the hidden class (adjust as needed)
+          setTimeout(() => {
+            elementToHide.classList.add('hidden');
+          }, 300);
+        }, 500);
     } else {
       updatedData[index].is_archived = "false";
+      setTimeout(() => {
+        elementToHide.classList.remove('hidden');
+        setTimeout(() => {
+          elementToHide.classList.remove('-translate-x-full');
+        }, 2);
+      }, 500);
     }
     setData(updatedData);
   };
@@ -71,14 +88,13 @@ export default function Home() {
         )}
       </div>
       {data.map((data, index) => (
-        <div key={index} className="flex p-8 itmes-center justify-between">
+        <div key={index} className="flex p-8 itmes-center place-items-center justify-between w-screen bg-gray-200">
           <div className="flex itmes-center">
-            <div className="p-1">{index}</div>
-            <div className="p-1">
+            <div className="flex itmes-center p-1">
               {data.call_type === "missed" ? (
                 <>
                   {data.direction === "inbound" && (
-                    <div className="flex items-center ">
+                    <div id={index} className="flex items-center p-8 transition-transform transform ease-in-out duration-300">
                       <CodiconCallIncomingNR />
                       <div className="p-2">
                         <span className="font-bold">From: {data.from}</span>
@@ -86,7 +102,7 @@ export default function Home() {
                     </div>
                   )}
                   {data.direction === "outbound" && (
-                    <div className="flex items-center ">
+                    <div id={index} className="flex items-center p-8 transition-transform transform ease-in-out duration-300">
                       <TdesignCallOff />
                       <div className="p-2">
                         <span className="font-bold">To: {data.to}</span>
@@ -97,7 +113,7 @@ export default function Home() {
               ) : (
                 <>
                   {data.direction === "inbound" && (
-                    <div className="flex items-center ">
+                    <div id={index} className="flex items-center p-8 transition-transform transform ease-in-out duration-300">
                       <CodiconCallIncoming />
                       <div className="flex flex-col p-2">
                         <span className="font-bold">From: {data.from}</span>
@@ -106,7 +122,7 @@ export default function Home() {
                     </div>
                   )}
                   {data.direction === "outbound" && (
-                    <div className="flex items-center ">
+                    <div id={index} className="flex items-center p-8 transition-transform transform ease-in-out duration-300">
                       <CodiconCallOutgoing />
                       <div className="p-2">
                         <span className="font-bold">To: {data.to}</span>
@@ -117,25 +133,24 @@ export default function Home() {
               )}
             </div>
           </div>
-          {data.is_archived === "false" && (
-            <>
-              <button
-                onClick={() => handleArchive(index)}
-                className="bg-black text-white p-2 rounded-lg"
-              >
-                Archive
-              </button>
-            </>
-          )}
-          {data.is_archived === "true" && (
-            <>
+          {data.is_archived === "true" ? (
+            <div>
               <button
                 onClick={() => handleArchive(index)}
                 className="bg-black text-white p-2 rounded-lg"
               >
                 Unarchive
               </button>
-            </>
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={() => handleArchive(index)}
+                className="bg-black text-white p-2 rounded-lg"
+              >
+                Archive
+              </button>
+            </div>
           )}
         </div>
       ))}
